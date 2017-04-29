@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Hangman Game</title>
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+<body>
+	<h1>Hangman Game</h1>
+	<p>Guess the letters in the word that I'm thinking of</p>
+	<div id="winsDiv">Wins: 0</div><br>
+	<div id="lossesDiv">Losses: 0</div><br>
+	<div id="guessesDiv">Guesses:</div><br>
+	<div id="guessListDiv">Your Guesses so far:</div><br>
+	<div id="guessWordDiv">Guess the word:</div><br>
+	<div id="commentDiv"></div>
+
+	<script type="text/javascript">
+		var validKeys = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+
+		var guessWords = [ 	"test", 
+							"dictionary", 
+							"scissors", 
+							"paper", 
+							"rock"
+						];
+
+		var maxGuesses = 13;
+		var wins = 0;
+		var losses = 0;
+		var guesses = maxGuesses;
+		var guessList = [];
+		var displayWord = [];
+
+		console.log("guessWords length: ", guessWords.length);
+
+		guessesDiv.innerHTML = "Guesses: " + guesses;
+
+		var computerSelect = Math.floor(Math.random() * guessWords.length);
+		console.log("Computer selects index: ", computerSelect);
+		console.log("Computer selects word: ", guessWords[computerSelect]);
+
+		for(var i=0; i < guessWords[computerSelect].length; i++) {
+			displayWord.push("_");
+		}
+		console.log("displayWord: ", displayWord);
+
+		printWord();
+
+		document.onkeyup = function(event) {
+			console.log("event key code", event.keyCode, event.key);
+			var letter = String.fromCharCode(event.keyCode).toLowerCase();
+
+			guessList.push(letter);
+
+			commentDiv.innerHTML = "";
+
+			updateWord(letter);
+
+			printWord();
+
+			if(checkWordCompleted()) {
+				winsDiv.innerHTML = "Wins: " + ++wins;
+
+				guesses = maxGuesses;
+				guessesDiv.innerHTML = "Guesses: " + guesses;
+
+				displayWord = [];
+				guessList = [];
+
+				commentDiv.innerHTML = "You win! The word is '" + guessWords[computerSelect] + "'. Try again!";
+
+				computerSelect = Math.floor(Math.random() * guessWords.length);
+
+				console.log("Computer selects index: ", computerSelect);
+				console.log("Computer selects word: ", guessWords[computerSelect]);
+
+				for(var i=0; i < guessWords[computerSelect].length; i++) {
+					displayWord.push("_");
+				}
+
+				console.log("displayWord: ", displayWord);
+
+				printWord();
+			}
+			else {
+				guessesDiv.innerHTML = "Guesses: " + --guesses;
+
+				if(guesses === 0) {
+					lossesDiv.innerHTML = "Losses: " + ++losses;
+
+					guesses = maxGuesses;
+					guessesDiv.innerHTML = "Guesses: " + guesses;
+
+					displayWord = [];
+					guessList = [];
+
+					commentDiv.innerHTML = "You lose! The word is '" + guessWords[computerSelect] + "'. Try again!";
+
+					computerSelect = Math.floor(Math.random() * guessWords.length);
+
+					console.log("Computer selects index: ", computerSelect);
+					console.log("Computer selects word: ", guessWords[computerSelect]);
+
+					for(var i=0; i < guessWords[computerSelect].length; i++) {
+						displayWord.push("_");
+					}
+					
+					console.log("displayWord: ", displayWord);
+
+					printWord();
+				}
+
+			}
+			guessListDiv.innerHTML = "Your Guesses so far: " + guessList;
+
+		}
+
+		function updateWord(letter) {
+			var str = guessWords[computerSelect].indexOf(letter);
+			console.log("IndexOf: ", str);
+
+			if(str < 0) {
+				return;
+			}
+			for(var i = 0; i < guessWords[computerSelect].length; i++) {
+				if (letter === guessWords[computerSelect][i]) {
+					displayWord[i] = letter;
+				}
+			}
+		}
+
+		function printWord() {
+			var wordDiv = document.getElementById("guessWordDiv");
+
+			wordDiv.innerHTML = "Guess the word:  ";
+
+			for(var i = 0; i < guessWords[computerSelect].length; i++) {
+				wordDiv.innerHTML =  wordDiv.innerHTML + "  " + displayWord[i] + "  ";
+			}
+		}
+
+		function checkWordCompleted() {
+			var retValue = false;
+
+			for(var i = 0; i < guessWords[computerSelect].length; i++) {
+				if(displayWord[i] === '_') {
+					// console.log("checkWordCompleted return FALSE")
+					return false;
+				}
+				// console.log("Word: ", displayWord[i])
+			}
+			// console.log("checkWordCompleted return true")
+			return true;
+		}
+
+	</script>
+	
+</body>
+</html>
